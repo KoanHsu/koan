@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	default-autowire="byName"
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd">
+
+<!-- 
+		ssm : spring4.3 + springMVC4.3 + mybatis3.2.3
+		ssh ：spring + struts2 + hibernate
+		
+		ssm环境搭建：
+		1. spring环境：
+			a.添加spring常用依赖;
+			b.准备spring配置文件:
+				先生成spring配置文件，并添加可能用到的schame;
+				这里为spring应用注解做准备，添加组件扫描范围;
+			c.web.xml文件中，配置spring监听器和上下文参数：
+				监听器监听服务器启动，当服务器启动的时候，马上初始化spring容器，为将来处理用户请求做准备;
+				上下文参数，用来指定spring配置文件的路径和名字
+			
+		2.springMVC环境：
+			a.添加springmvc依赖;
+			b.springmvc配置文件:
+				生成springmvc的配置文件，这里直接利用spring配置文件就可以了;
+				配置mvc注解驱动；
+				配置视图处理器;
+			c.web.xml文件中，配置DispatcherServlet
+				此时因为MVC配置文件放到了resources目录下，所以需要在servlet中，配置一个初始化参数，用来指明mvc配置文件的路径和名字
+		
+		3.mybatis环境; 
+			a.添加mybatis依赖：
+				mybatis核心依赖;
+				数据库驱动依赖;
+					这里使用的是oracle,但是通常中央仓库中无法下载oracle依赖，所以这里自己安装了一个oracle依赖：
+						mvn install:install-file -DgroupId=com.oracle -DartifactId=ojdbc6 -Dversion=11.2.0.4.0 -Dpackaging=jar -Dfile=ojdbc6.jar
+			b.准备mybatis的配置文件：
+				现在因为数据源应该交给spring来管理，数据库连接对象应该由spring来创建
+				通过由第三方的工具，来创建和管理我的数据源：
+				常见的数据源工具有：commons,c3p0,druid..
+				这里使用apache提供的commons数据源：
+					第一步，添加commons数据源依赖；
+					第二步，spring配置文件中，添加bean,并添加必要的连接参数;
+				app.xml文件中，配置连接工厂
+				配置连接工厂的时候，又需要添加mybatis-spring依赖；
+				准备实体映射文件，实体类，并在mybatis配置文件中引入;
+				
+		
+	 -->
+	
+	
+	
+	<context:annotation-config></context:annotation-config>
+	<context:component-scan base-package="koan"></context:component-scan>
+	
+	<mvc:annotation-driven/>
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver" >
+		<property name="prefix" value="/"></property>
+		<property name="suffix" value=".jsp" ></property>
+	</bean>
+	
+	<!-- 数据源 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" >
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" ></property>
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:ORCL" ></property>
+		<property name="username" value="zhangsan" ></property>
+		<property name="password" value="abc" ></property>
+	</bean>
+	
+	<!-- 连接工厂 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean" >
+		<property name="dataSource" ref="dataSource" ></property>
+		<property name="configLocation" value="classpath:mybatis_config.xml" ></property>
+		<!-- <property name="mapperLocations" value="classpath:koan/pojo/*.xml" ></property> -->
+		<!-- <property name="mapperLocations">
+			<array>
+				<value>classpath:xxx.xml</value>
+			</array>
+		</property> -->
+	</bean>
+
+</beans>

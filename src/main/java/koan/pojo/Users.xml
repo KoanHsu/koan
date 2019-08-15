@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="koan.pojo.Users" >
+	<select id="findUserByNameAndPwd" parameterType="koan.pojo.Users" resultType="koan.pojo.Users">
+		select userid,loginname,loginpwd,realname,phone from t_user
+		where loginname=#{loginname} and loginpwd=#{loginpwd}
+	</select>
+</mapper>
